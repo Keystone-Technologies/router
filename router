@@ -1,0 +1,18 @@
+use Mojolicious::Lite;
+
+use lib '/var/mojo/mojolicious-plugin-nginx/lib';
+
+plugin 'Config' => {default => {hypnotoad => {listen=>['http://*:80']}}};
+
+plugin 'Nginx';
+
+plugin Mount => {'portal.dev.kit.cm' => '/var/mojo/portal/lite_app'};
+plugin Mount => {'dt.dev.kit.cm' => '/var/mojo/dt/lite_app'};
+plugin Mount => {'rescue.dev.kit.cm' => '/var/mojo/rescue/lite_app'};
+plugin Mount => {'commons.dev.kit.cm' => '/var/mojo/commons/lite_app'};
+plugin Mount => {'kms.dev.kit.cm' => '/var/mojo/kms/lite_app'};
+plugin Mount => {'pi.dev.kit.cm' => '/var/mojo/pi/lite_app'};
+plugin Mount => {'rtc.dev.kit.cm' => '/var/mojo/rtc/lite_app'};
+plugin Mount => {'i70.dev.kit.cm' => '/var/mojo/i70/script/i70'};
+
+app->start;
