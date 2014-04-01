@@ -1,8 +1,9 @@
 use Mojolicious::Lite;
 
-use lib '/var/mojo/mojolicious-plugin-nginx/lib';
+use lib '/var/mojo/lib';
 
-plugin 'Config' => {default => {hypnotoad => {listen=>['http://*:80']}}};
+$ENV{MOJO_LISTEN} = 'http://*:8080' if $ENV{MORBO_REV};
+plugin 'Config' => {default => {hypnotoad => {listen=>['http://*:8080']}}};
 
 plugin 'Nginx';
 
