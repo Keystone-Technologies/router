@@ -1,6 +1,7 @@
+hypnotoad.pid
+.public~
 commons
 dt
-hypnotoad.pid
 i70
 kms
 log
@@ -8,3 +9,5 @@ pi
 portal
 rescue
 rtc
+dropzone
+domain-check
