@@ -1,3 +1,4 @@
+router.conf
 hypnotoad.pid
 .public~
 commons
@@ -11,3 +12,5 @@ rescue
 rtc
 dropzone
 domain-check
+patient-checkin
+checkip
