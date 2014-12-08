@@ -6,23 +6,31 @@ BEGIN { unshift @INC, "$FindBin::Bin/lib" }
 use File::Spec::Functions qw(catfile);
 
 $ENV{MOJO_LISTEN} = 'http://*:8080' if $ENV{MORBO_REV};
-plugin 'Config' => {default => {hypnotoad => {listen=>['http://*:8080']}}};
+plugin 'Config' => {
+  file => '/etc/default/mojo-router.conf',
+  default => {hypnotoad => {listen=>['http://*:8080']}}
+};
 
 plugin 'Nginx';
 
 die "Router base not defined\n" unless my $base = $ENV{ROUTER_BASE} || app->config->{base};
 my $home = app->home;
-opendir(my $dh, $home);
-foreach ( grep { !/\brouter\b/ && !/^\./ } readdir($dh) ) {
-  my $app;
-  $app = catfile $home, $_, 'lite_app';
-  $app = catfile $home, $_, 'script', $_ unless $app && -f $app;
-  if ( $app && -f $app ) {
-    my $host = join('.', lc($_), $base);
-    plugin Mount => {$host => $app};
-    app->log->info("Mounted $host => $app");
+foreach my $org ( @{app->config->{orgs}} ) {
+  opendir(my $dh, $home->rel_dir($org));
+  foreach ( grep { !/^\./ } readdir($dh) ) {
+    next if $org eq 'kit' && /^(dt)$/;
+    my $app;
+    $app = $home->rel_file("$org/$_/lite_app");
+    $app = $home->rel_file("$org/$_/script/$_") unless $app && -f $app;
+    if ( $app && -f $app ) {
+      my $host = join('.', lc($_), $base);
+      plugin Mount => {$host => $app};
+      app->log->info("Mounted $host => $app");
+    } else {
+      app->log->info("No start script found for $app");
+    }
   }
+  closedir $dh;
 }
-closedir $dh;
 
 app->start;
